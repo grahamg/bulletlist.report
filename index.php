@@ -3,40 +3,39 @@ require_once 'vendor/autoload.php';
 
 use SimplePie\SimplePie;
 
-// Read the .ini file
 $feedsIni = parse_ini_file('feeds.ini', true);
-
-// Array to hold the feed data
 $feedData = [];
 
-foreach ($feedsIni as $title => $feedInfo) {
-  // Create a new SimplePie object
-  $rss = new SimplePie();
-  // Set the feed URL
-  $rss->set_feed_url($feedInfo['uri']);
+$gridColumns = 3;
+if (isset($_GET['columns'])) {
+  $gridColumns = $_GET['columns'];
+}
 
-  // Initialize the feed object
+$limit = 20;
+if (isset($_GET['limit'])) {
+  $limit = $_GET['limit'];
+}
+
+foreach ($feedsIni as $title => $feedInfo) {
+  $rss = new SimplePie();
+  $rss->set_feed_url($feedInfo['uri']);
   $rss->init();
   $rss->handle_content_type();
 
-  // Array to hold the items for the current feed
   $items = [];
-
-  // Loop through each item in the feed
   foreach ($rss->get_items() as $item) {
-      // Add the item data to the array
       $items[] = [
           'title' => $item->get_title(),
           'link' => $item->get_link(),
           'description' => $item->get_description(),
-          'date' => $item->get_date('j F Y | g:i a'),
+          'date_time' => $item->get_date('m/d/Y @ h:i a')
       ];
   }
 
   // Add the feed data to the array
   $feedData[$title] = [
       'title' => $title,
-      'items' => $items,
+      'items' => array_slice($items, 0, $limit)
   ];
 }
 
@@ -51,7 +50,7 @@ if (isset($_GET['json'])) {
 		$json[$feed['title']] = [];
 		foreach ($feed['items'] as $entry) {
                         $json[$feed['title']][$entry['title']] = [];
-                        $json[$feed['title']][$entry['title']]['date'] = $entry['date'];
+                        $json[$feed['title']][$entry['title']]['date_time'] = $entry['date'];
                         $json[$feed['title']][$entry['title']]['description'] = $entry['description'];
                         $json[$feed['title']][$entry['title']]['original_uri'] = $entry['link'];
                         $json[$feed['title']][$entry['title']]['proxy_uri'] = 'https://12ft.io/' . $entry['link'];
@@ -69,12 +68,11 @@ echo '<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Include Tailwind CSS from CDN -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <title>News Aggregator</title>
 </head>
-<body class="bg-gray-100 p-8">
-  <div class="grid grid-cols-3 gap-4">';
+<body class="bg-gray-100 p-8">';
+echo '<div class="grid grid-cols-1 md:grid-cols-' . $gridColumns . ' gap-4">';
 
 foreach ($feedData as $feed) {
 	// If for some reason the feed has no items, skip it.
@@ -87,7 +85,13 @@ foreach ($feedData as $feed) {
          <ul class="list-disc pl-6">';
 
   foreach ($feed['items'] as $item) {
-      echo '<li class="mb-2"><a href="https://archive.ph/submit/?url=' . $item['link'] . '" target="_blank">' . $item['title'] . '</a> <a href="https://12ft.io/' . $item['link'] . '" target="_blank">...</a></li>';
+      echo '<li class="mb-2">';
+      echo '<a href="' . $item['link'] . '" target="_blank">' . $item['title']  . '</a>';
+      echo '<div class="text-sm w-24/2 shadow-xl border-2 border-opacity-25 bg-slate-100 text-gray-500 hover:text-black">';
+      echo ' [ ' . '<i><a href="https://archive.ph/submit/?url=' . $item['link'] . '" target="_blank">archive</a></i>' . ' | ' . '<i><a href="https://12ft.io/' . $item['link']  . '" target="_blank">proxy</a></i>' . ' ]';
+      echo ' [ ' . $item['date_time']  . ' ]';
+      echo '</div>';
+      echo '</li>';
   }
 
   echo '</ul>
@@ -97,5 +101,3 @@ foreach ($feedData as $feed) {
 echo '</div>
      </body>
 </html>';
-?>
-
