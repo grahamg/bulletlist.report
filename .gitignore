@@ -1,0 +1,16 @@
+# .gitignore
+
+# Ignore vendor directory created by Composer
+/vendor/
+
+# Ignore Composer's autoloader file
+/vendor/autoload.php
+
+# Ignore Composer's generated files
+/composer.phar
+/composer.lock
+
+# Ignore any logs or temporary files
+/log/
+/temp/
+

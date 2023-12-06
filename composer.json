@@ -1,0 +1,17 @@
+{
+    "name": "your-username/your-project-name",
+    "description": "Description of your project",
+    "type": "project",
+    "require": {
+        "twig/twig": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "YourNamespace\\": "src/"
+        }
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    }
+}
+

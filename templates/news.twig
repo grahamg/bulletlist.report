@@ -1,0 +1,28 @@
+{# templates/news.twig #}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Include Tailwind CSS from CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>News Aggregator</title>
+</head>
+<body class="bg-gray-100 p-8">
+
+{% for feed in feeds %}
+    <h3 class="text-xl font-bold mb-4">{{ feed.title }}</h3>
+    <ul class="list-disc pl-6">
+        {% if feed.items is defined %}
+            {% for item in feed.items %}
+                <li class="mb-2"><a href="{{ item.link }}" target="_blank">{{ item.title }}</a></li>
+            {% endfor %}
+        {% elseif feed.error is defined %}
+            <p class='text-red-500'>Error loading {{ feed.title }} feed.</p>
+        {% endif %}
+    </ul>
+{% endfor %}
+
+</body>
+</html>
