@@ -3,7 +3,10 @@
     "description": "Description of your project",
     "type": "project",
     "require": {
-        "twig/twig": "^3.0"
+        "twig/twig": "^3.0",
+        "guzzlehttp/guzzle": "^7.8",
+        "simplepie/simplepie": "^1.8",
+        "dg/rss-php": "^1.5"
     },
     "autoload": {
         "psr-4": {
@@ -14,4 +17,3 @@
         "test": "echo \"Error: no test specified\" && exit 1"
     }
 }
-
