@@ -3,7 +3,7 @@ require_once 'vendor/autoload.php';
 
 use SimplePie\SimplePie;
 
-$feedsIni = parse_ini_file('feeds.ini', true);
+$feedsIni = parse_ini_file('fp_feeds.ini', true);
 $feedData = [];
 
 $gridColumns = 3;
